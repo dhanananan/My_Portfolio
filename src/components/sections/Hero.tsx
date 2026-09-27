@@ -46,28 +46,10 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden pb-24 pt-36 sm:pb-32 sm:pt-44 lg:pt-52"
+      className="relative pb-24 pt-36 sm:pb-32 sm:pt-44 lg:pt-52"
       aria-labelledby="hero-heading"
     >
-      {/* Ambient colour behind the masthead — ​atmosphere, not a shape that
-          competes with the name. Grain (the second, tiled background layer,
-          blended with `overlay`) keeps a big blurred gradient from reading
-          as a flat, plasticky blob. Negative z-index + no positioning
-          context of its own: it paints behind `.shell`'s in-flow content
-          without needing that content to opt into a stacking context. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-16 -right-16 -z-10 size-56 rounded-full blur-2xl sm:-top-28 sm:-right-14 sm:size-88 sm:blur-3xl lg:-top-40 lg:-right-10 lg:size-168"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 34% 30%, #c7d0ff 0%, #6478f0 40%, #1f35e6 66%, transparent 76%), ' +
-            'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'2\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
-          backgroundBlendMode: 'overlay',
-          opacity: 0.55,
-        }}
-      />
-
-      <div className="shell relative">
+      <div className="shell">
         <p className="eyebrow flex items-center gap-2">
           <span aria-hidden="true" className="text-accent">
             ●
