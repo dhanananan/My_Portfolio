@@ -56,23 +56,28 @@
   --color-ink-border: #2b2926;
 
   /* --- Typeface -----------------------------------------------------------
-     The Apple marketing-site look: San Francisco is a proprietary Apple font
-     that cannot legally be self-hosted or served from a third-party site, so
-     this uses the same technique Apple's own web team uses to get it — the
-     `-apple-system` / `BlinkMacSystemFont` system-font keywords, which
-     resolve to real San Francisco on macOS and iOS Safari/Chrome. Everywhere
-     else, it falls through to that OS's own native UI font (Segoe UI on
-     Windows, Roboto on Android) rather than a mismatched web font — which is
-     the same trade-off apple.com itself makes for non-Apple visitors.
-     No Google Fonts request for the primary typeface any more: one less
-     external round-trip, no flash-of-unstyled-text.
-     --font-serif intentionally equals --font-sans — Apple's site has no
-     serif accents, so the rare `font-serif italic` flourish now renders as
-     italic system font instead of pulling in a separate serif family. */
+     Body copy keeps the Apple marketing-site look: San Francisco is a
+     proprietary Apple font that cannot legally be self-hosted or served from
+     a third-party site, so this uses the same technique Apple's own web team
+     uses to get it — the `-apple-system` / `BlinkMacSystemFont` system-font
+     keywords, which resolve to real San Francisco on macOS and iOS
+     Safari/Chrome. Everywhere else, it falls through to that OS's own native
+     UI font (Segoe UI on Windows, Roboto on Android) rather than a
+     mismatched web font. No network request either way.
+     Headings are a different story: a plain UI font on every title reads as
+     unfinished on an *editorial* portfolio, so h1–h6 (see BASE below) use
+     Fraunces — a soft, characterful serif — instead. It is variable on both
+     weight and optical size, and `font-optical-sizing: auto` (set on the
+     h1–h6 rule) lets one file look right from a small card title up to the
+     hero-scale display sizes, rather than needing per-size overrides.
+     --font-serif now really is a serif (it used to alias --font-sans, back
+     when nothing on the page had one) — the one italic flourish
+     (BeyondDesign's aside) renders in Fraunces italic. */
   --font-sans:
     -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto,
     Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-sans);
+  --font-heading: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-serif: var(--font-heading);
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   /* Inflated "bubble" display face for the hero name — see @font-face above.
      Falls back to a heavy system sans so it degrades to bold, not to thin. */
@@ -211,7 +216,9 @@
   h4,
   h5,
   h6 {
+    font-family: var(--font-heading);
     font-weight: 500;
+    font-optical-sizing: auto;
     text-wrap: balance;
   }
 
