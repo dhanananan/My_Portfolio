@@ -91,13 +91,14 @@ export function Navbar() {
           )}
         >
           {/* Wordmark */}
-          <Link to="/" className="group -ml-1 flex items-center gap-3 px-1 py-2" aria-label={`${site.name} — home`}>
-            <span
-              className={cn(
-                'relative flex size-2 shrink-0 items-center justify-center rounded-full bg-accent transition-transform duration-500',
-                'after:absolute after:size-2 after:rounded-full after:bg-accent after:opacity-40 motion-safe:after:animate-ping',
-              )}
+          <Link to="/" className="group -ml-1 flex items-center gap-2.5 px-1 py-2" aria-label={`${site.name} — home`}>
+            <img
+              src="/bee.png"
+              alt=""
               aria-hidden="true"
+              width={160}
+              height={160}
+              className="size-7 shrink-0 object-contain transition-transform duration-500 group-hover:-rotate-12"
             />
             <span className="flex flex-col leading-none">
               <span className="text-[0.9375rem] font-semibold tracking-tight">{site.name}</span>
