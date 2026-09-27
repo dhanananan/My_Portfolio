@@ -136,6 +136,10 @@
 
   /* --- Keyframes ---------------------------------------------------------- */
   --animate-marquee: marquee var(--marquee-duration, 48s) linear infinite;
+  /* Loops the navbar bee around the wordmark once every 9s. The path itself
+     (a figure-eight, sized to the rendered "Dhananjaya Raut" text — see
+     Navbar.tsx) lives in `offset-path`, set inline; this just walks it. */
+  --animate-bee-orbit: bee-orbit 9s linear infinite;
 
   @keyframes marquee {
     from {
@@ -143,6 +147,12 @@
     }
     to {
       transform: translate3d(-100%, 0, 0);
+    }
+  }
+
+  @keyframes bee-orbit {
+    to {
+      offset-distance: 100%;
     }
   }
 
