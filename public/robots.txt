@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Update the host before deploying.
+Sitemap: https://dhananjayaraut.com/sitemap.xml

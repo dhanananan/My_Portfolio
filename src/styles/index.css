@@ -1,0 +1,365 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   DISPLAY FACE — the hero name only.
+   Modak (Ek Type, SIL Open Font License), self-hosted: the Latin subset is
+   33KB, there is no third-party request, and it can be preloaded from
+   index.html. `font-display: block` on purpose — the name animates in from
+   opacity 0 anyway, so a short invisible period costs nothing, whereas
+   `swap` would flash the system font first and then visibly jump to this
+   very different shape.
+   ========================================================================== */
+@font-face {
+  font-family: 'Modak';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('/fonts/modak-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ==========================================================================
+   DESIGN TOKENS
+   Single source of truth. Tailwind v4 reads @theme and emits both the CSS
+   custom properties and the matching utilities (bg-background, text-muted…).
+   Change a value here and it propagates across the entire site.
+   ========================================================================== */
+
+@theme {
+  /* --- Colour -------------------------------------------------------------
+     Neutral-first, warm. One accent, used sparingly.
+     Contrast (vs --color-background #FBFAF8):
+       foreground   #151412  →  17.6:1   AAA
+       muted        #6B6660  →   5.6:1   AA  (body + small text)
+       subtle       #8C877F  →   3.6:1   AA large / non-essential only
+       accent       #1F35E6  →   7.5:1   AAA large, AA body
+     ---------------------------------------------------------------------- */
+  --color-background: #fbfaf8;
+  --color-surface: #f4f2ee;
+  --color-surface-deep: #ebe8e1;
+  --color-foreground: #151412;
+  --color-muted: #6b6660;
+  --color-subtle: #8c877f;
+  --color-border: #e3dfd7;
+  --color-border-strong: #cec9be;
+  --color-accent: #1f35e6;
+  --color-accent-hover: #1626b4;
+  --color-accent-foreground: #fbfaf8;
+  --color-accent-wash: #eceefd;
+
+  /* Inverted surface, used for the contact finale + case-study hero */
+  --color-ink: #121110;
+  --color-ink-foreground: #f2efe9;
+  --color-ink-muted: #918b81;
+  --color-ink-border: #2b2926;
+
+  /* --- Typeface -----------------------------------------------------------
+     The Apple marketing-site look: San Francisco is a proprietary Apple font
+     that cannot legally be self-hosted or served from a third-party site, so
+     this uses the same technique Apple's own web team uses to get it — the
+     `-apple-system` / `BlinkMacSystemFont` system-font keywords, which
+     resolve to real San Francisco on macOS and iOS Safari/Chrome. Everywhere
+     else, it falls through to that OS's own native UI font (Segoe UI on
+     Windows, Roboto on Android) rather than a mismatched web font — which is
+     the same trade-off apple.com itself makes for non-Apple visitors.
+     No Google Fonts request for the primary typeface any more: one less
+     external round-trip, no flash-of-unstyled-text.
+     --font-serif intentionally equals --font-sans — Apple's site has no
+     serif accents, so the rare `font-serif italic` flourish now renders as
+     italic system font instead of pulling in a separate serif family. */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto,
+    Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-sans);
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Inflated "bubble" display face for the hero name — see @font-face above.
+     Falls back to a heavy system sans so it degrades to bold, not to thin. */
+  --font-display: 'Modak', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial Black, sans-serif;
+
+  /* --- Fluid type scale ---------------------------------------------------
+     Every step is clamp()ed between the 375px floor and the 1440px ceiling.
+     ---------------------------------------------------------------------- */
+  /* The hero wordmark is one long unbreakable word, so it is sized from the
+     viewport rather than from a fixed floor — that keeps "DHANANJAYA" on one
+     line all the way down to 320px. */
+  --text-hero: clamp(2.5rem, 13.6vw, 11.5rem); /* 40 → 184 */
+  --text-hero--line-height: 0.86;
+  --text-hero--letter-spacing: -0.012em;
+
+  --text-display: clamp(3.25rem, 1.4rem + 7.9vw, 7rem); /* 52 → 112 */
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.04em;
+
+  --text-h1: clamp(2.75rem, 1.6rem + 4.9vw, 4.5rem); /* 44 → 72 */
+  --text-h1--line-height: 0.96;
+  --text-h1--letter-spacing: -0.035em;
+
+  --text-h2: clamp(2rem, 1.35rem + 2.8vw, 3.25rem); /* 32 → 52 */
+  --text-h2--line-height: 1.02;
+  --text-h2--letter-spacing: -0.03em;
+
+  --text-h3: clamp(1.5rem, 1.2rem + 1.3vw, 2.25rem); /* 24 → 36 */
+  --text-h3--line-height: 1.12;
+  --text-h3--letter-spacing: -0.02em;
+
+  --text-h4: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem); /* 20 → 24 */
+  --text-h4--line-height: 1.25;
+  --text-h4--letter-spacing: -0.015em;
+
+  --text-lead: clamp(1.125rem, 1.03rem + 0.4vw, 1.375rem); /* 18 → 22 */
+  --text-lead--line-height: 1.5;
+  --text-lead--letter-spacing: -0.012em;
+
+  --text-body: clamp(1rem, 0.96rem + 0.17vw, 1.125rem); /* 16 → 18 */
+  --text-body--line-height: 1.65;
+
+  --text-small: 0.875rem; /* 14 */
+  --text-small--line-height: 1.6;
+
+  --text-label: 0.75rem; /* 12 — mono eyebrows */
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.12em;
+
+  /* --- Motion ------------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  /* Overshoots slightly past its target and settles — the "boing" on hover. */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Layout ------------------------------------------------------------- */
+  --spacing-gutter: clamp(1.25rem, 0.7rem + 2.4vw, 3.5rem);
+  --spacing-section: clamp(5rem, 3rem + 8vw, 10rem);
+  --radius-card: 2px;
+
+  /* --- Keyframes ---------------------------------------------------------- */
+  --animate-marquee: marquee var(--marquee-duration, 48s) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-100%, 0, 0);
+    }
+  }
+
+  @keyframes caret {
+    0%,
+    45% {
+      opacity: 1;
+    }
+    50%,
+    95% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* Offset for in-page anchors so the sticky nav never covers a heading. */
+    scroll-padding-top: 7rem;
+  }
+
+  /* Lenis owns scrolling once it mounts; these are its required hooks. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  img {
+    height: auto;
+  }
+
+  /* Focus: invisible for mouse users, unmissable for keyboard users. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+  }
+
+  /* Hide the native cursor only where the custom one actually runs. */
+  @media (hover: hover) and (pointer: fine) {
+    body[data-custom-cursor='on'],
+    body[data-custom-cursor='on'] a,
+    body[data-custom-cursor='on'] button {
+      cursor: none;
+    }
+  }
+}
+
+/* ==========================================================================
+   COMPONENT PRIMITIVES
+   ========================================================================== */
+
+@layer components {
+  /* The single page container. Everything aligns to this. */
+  .shell {
+    width: 100%;
+    max-width: 90rem; /* 1440 */
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  /* Mono eyebrow label — the editorial signature of the whole site. */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--color-subtle);
+  }
+
+  /* Underline that draws in from the left on hover. */
+  .link-underline {
+    position: relative;
+    display: inline-block;
+  }
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.1em;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.45s var(--ease-out-expo);
+  }
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Permanent rule that retracts on hover — used for nav + list rows. */
+  .link-retract::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .link-retract:hover::after {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+}
+
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+
+@utility text-balance-none {
+  text-wrap: initial;
+}
+
+/* Scroll-reveal primitive. JS flips [data-revealed] once the element is in
+   view; the transition itself is CSS, so revealing costs one attribute write.
+   The <noscript> block in index.html keeps content visible if JS never runs. */
+@layer components {
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-y, 1.5rem), 0);
+    transition:
+      opacity 0.85s var(--ease-out-expo),
+      transform 0.85s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  [data-reveal][data-revealed='true'] {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}
+
+/* ==========================================================================
+   MOTION PREFERENCES
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Never leave content stuck in its pre-animation state. */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

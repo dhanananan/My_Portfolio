@@ -1,0 +1,17 @@
+{
+  "name": "Dhananjaya Raut — UI/UX Designer",
+  "short_name": "Dhananjaya Raut",
+  "description": "Designing digital experiences that are simple, intuitive, and meaningful.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBFAF8",
+  "theme_color": "#FBFAF8",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
