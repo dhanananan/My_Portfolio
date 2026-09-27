@@ -315,6 +315,29 @@
     transform: scaleX(0);
     transform-origin: right;
   }
+
+  /* A two-tone "sweep" masked to the text itself, for a paragraph that lights
+     up as it scrolls into view rather than just fading. `--reveal` (0 → 1)
+     slides a hard-edged gradient across the glyphs; JS drives it (see
+     BeyondDesign.tsx) via GSAP's RAF loop, not a CSS transition, so it can
+     track scroll position exactly rather than only play once. It inherits,
+     so a nested span picks up its ancestor's value automatically — only
+     `--sweep-from`/`--sweep-to` need overriding per element. Defaults to
+     fully revealed (`--reveal: 1`) so anything that never sets it — reduced
+     motion, or the instant before JS runs — just shows plain, visible text. */
+  .reveal-sweep {
+    background-image: linear-gradient(
+      to right,
+      var(--sweep-to, var(--color-foreground)) 50%,
+      var(--sweep-from, var(--color-border-strong)) 50%
+    );
+    background-size: 200% 100%;
+    background-position-x: calc(100% - var(--reveal, 1) * 100%);
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 /* ==========================================================================
