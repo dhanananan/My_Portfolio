@@ -5,16 +5,16 @@ import { site } from '@/data/site'
 /**
  * Portrait.
  * ---------------------------------------------------------------------------
- * Drop a real photo at /portrait.png (or pass `src`) and it is used. Until
+ * Drop a real photo at /portrait.webp (or pass `src`) and it is used. Until
  * then this renders a composed geometric stand-in rather than a grey box or,
  * worse, a stock photo of somebody else.
  *
- * The current /portrait.png is a flat line-art illustration on a white
- * canvas rather than a cropped photo, so it is presented `object-contain`
- * with inset padding — a framed avatar card, not a portrait crop that would
- * cut its edges off.
+ * The current /portrait.webp is an illustration on a white canvas rather
+ * than a cropped photo, so it is presented `object-contain` with inset
+ * padding — a framed art card, not a portrait crop that would cut its
+ * edges off.
  */
-export function Portrait({ src = '/portrait.png', className }: { src?: string; className?: string }) {
+export function Portrait({ src = '/portrait.webp', className }: { src?: string; className?: string }) {
   const [failed, setFailed] = useState(false)
 
   return (
