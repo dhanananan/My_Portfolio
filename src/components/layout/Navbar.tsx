@@ -6,29 +6,6 @@ import { Button } from '@/components/ui/Button'
 import { MobileMenu } from './MobileMenu'
 
 /**
- * A figure-eight for the bee to loop around the wordmark on, generated from
- * `x = cx + Ax·sin(t)`, `y = cy + (Ay/2)·sin(2t)` — a flat, wide lemniscate
- * rather than a circle, so it reads as an "infinity" loop around one line of
- * text instead of a spin around a point. Sized to the *rendered* "Dhananjaya
- * Raut" at the navbar's font (measured at ~111×15px): cx/cy sit at the
- * text's centre, Ax/Ay give ~14–18px of clearance past its edges. `t` starts
- * at -π/2 so the path's first point — where the bee rests under reduced
- * motion — is beside the "D", not mid-word. If `site.name` or the navbar
- * font ever changes materially, re-measure and regenerate rather than
- * eyeballing new numbers.
- */
-const BEE_ORBIT_PATH =
-  'M -12.5,7.5 L -12.2,5.1 L -11.5,2.7 L -10.2,0.5 L -8.4,-1.5 L -6.1,-3.2 L -3.4,-4.6 L -0.2,-5.7 ' +
-  'L 3.4,-6.3 L 7.4,-6.5 L 11.8,-6.3 L 16.5,-5.7 L 21.5,-4.6 L 26.8,-3.2 L 32.2,-1.5 L 37.9,0.5 ' +
-  'L 43.7,2.7 L 49.6,5.1 L 55.5,7.5 L 61.4,9.9 L 67.3,12.3 L 73.1,14.5 L 78.8,16.5 L 84.2,18.2 ' +
-  'L 89.5,19.6 L 94.5,20.7 L 99.2,21.3 L 103.6,21.5 L 107.6,21.3 L 111.2,20.7 L 114.4,19.6 L 117.1,18.2 ' +
-  'L 119.4,16.5 L 121.2,14.5 L 122.5,12.3 L 123.2,9.9 L 123.5,7.5 L 123.2,5.1 L 122.5,2.7 L 121.2,0.5 ' +
-  'L 119.4,-1.5 L 117.1,-3.2 L 114.4,-4.6 L 111.2,-5.7 L 107.6,-6.3 L 103.6,-6.5 L 99.2,-6.3 L 94.5,-5.7 ' +
-  'L 89.5,-4.6 L 84.2,-3.2 L 78.8,-1.5 L 73.1,0.5 L 67.3,2.7 L 61.4,5.1 L 55.5,7.5 L 49.6,9.9 ' +
-  'L 43.7,12.3 L 37.9,14.5 L 32.2,16.5 L 26.8,18.2 L 21.5,19.6 L 16.5,20.7 L 11.8,21.3 L 7.4,21.5 ' +
-  'L 3.4,21.3 L -0.2,20.7 L -3.4,19.6 L -6.1,18.2 L -8.4,16.5 L -10.2,14.5 L -11.5,12.3 L -12.2,9.9 L -12.5,7.5 Z'
-
-/**
  * Site header.
  * ---------------------------------------------------------------------------
  * Compacts after the first scroll and hides when scrolling down mid-page, so
@@ -114,26 +91,17 @@ export function Navbar() {
           )}
         >
           {/* Wordmark */}
-          <Link to="/" className="-ml-1 flex items-center px-1 py-2" aria-label={`${site.name} — home`}>
+          <Link to="/" className="group -ml-1 flex items-center gap-2.5 px-1 py-2" aria-label={`${site.name} — home`}>
+            <img
+              src="/bee.png"
+              alt=""
+              aria-hidden="true"
+              width={160}
+              height={160}
+              className="size-7 shrink-0 object-contain transition-transform duration-500 group-hover:-rotate-12"
+            />
             <span className="flex flex-col leading-none">
-              <span className="relative inline-block text-[0.9375rem] font-semibold tracking-tight">
-                {site.name}
-                {/* The bee loops the name on a figure-eight path — see BEE_ORBIT_PATH
-                    below for how it's sized to the text. `prefers-reduced-motion` is
-                    handled globally (src/styles/index.css turns every animation into
-                    a single near-instant frame), so it just settles at the path's
-                    start point — left of the "D", vertically centred — rather than
-                    needing a separate static fallback here. */}
-                <img
-                  src="/bee.png"
-                  alt=""
-                  aria-hidden="true"
-                  width={160}
-                  height={160}
-                  className="pointer-events-none absolute left-0 top-0 size-7 -z-10 object-contain motion-safe:animate-bee-orbit"
-                  style={{ offsetPath: `path('${BEE_ORBIT_PATH}')`, offsetDistance: '0%', offsetRotate: '0deg' }}
-                />
-              </span>
+              <span className="text-[0.9375rem] font-semibold tracking-tight">{site.name}</span>
               <span
                 className={cn(
                   'eyebrow overflow-hidden text-[0.6875rem] transition-all duration-500 ease-out-expo',
