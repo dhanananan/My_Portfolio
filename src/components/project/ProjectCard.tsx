@@ -13,8 +13,10 @@ import { ProjectVisual } from './ProjectVisual'
  * No panel, tint or frame behind the image — the work is the card. Website
  * screenshots are cropped to the card's shape from the top (`object-top`), so
  * the header and hero, which are the recognisable part of a page, always
- * survive the crop. Nothing is overlaid on the image either: screenshots are
- * mostly white, so any label laid over one would be unreadable.
+ * survive the crop. The one thing laid over an image is the "View project"
+ * chip — opaque and blurred rather than bare text, so it stays legible
+ * regardless of what's under it (screenshots are mostly white; a plain label
+ * would wash out).
  *
  * Everything a visitor would otherwise scan a paragraph for (what it is, which
  * tools, what came of it) is one click away on the case study, so it is not
@@ -125,10 +127,31 @@ export function ProjectCard({
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 rounded-card ring-1 ring-inset ring-black/[0.07]"
           />
+
+          {/* Decorative only — the whole card is already one link (aria-label
+              carries "View case study"), so this can't be a second focusable
+              element. Always present, not hover-only: hover has no equivalent
+              on a touch screen, and a chip that only desktop ever sees would
+              make the two feel like different products. */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-4 py-2 text-[0.6875rem] font-medium tracking-[0.08em] text-foreground uppercase shadow-[0_1px_2px_rgba(21,20,18,0.08)] backdrop-blur-sm transition-transform duration-500 ease-out-expo group-hover/project:-translate-y-1"
+          >
+            View project
+            <svg viewBox="0 0 10 10" aria-hidden="true" className="size-2.5">
+              <path d="M2 8 8 2M3 2h5v5" fill="none" stroke="currentColor" strokeWidth="1.2" />
+            </svg>
+          </span>
         </div>
 
-        <Reveal className="mt-5 flex items-start justify-between gap-6" delay={80} y={16}>
-          <div className="min-w-0">
+        <Reveal className="mt-5" delay={80} y={16}>
+          <p className="eyebrow flex items-center gap-2">
+            <span className="tabular-nums">{project.index}</span>
+            <span className="opacity-40">/</span>
+            {project.category}
+          </p>
+
+          <div className="mt-2 min-w-0">
             <Heading
               className={cn(
                 'flex flex-wrap items-center gap-x-3 gap-y-1 font-medium',
@@ -148,12 +171,6 @@ export function ProjectCard({
             </Heading>
             <p className="mt-1.5 text-muted">{project.subtitle}</p>
           </div>
-
-          <p className="eyebrow hidden shrink-0 pt-2 text-right sm:block">
-            <span className="tabular-nums">{project.index}</span>
-            <span className="mx-2 opacity-40">/</span>
-            {project.category}
-          </p>
         </Reveal>
       </Link>
     </article>
