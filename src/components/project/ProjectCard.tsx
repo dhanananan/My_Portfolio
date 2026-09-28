@@ -10,13 +10,18 @@ import { ProjectVisual } from './ProjectVisual'
  * One project, as one card: the image itself, and only a title and a short
  * line underneath.
  * ---------------------------------------------------------------------------
- * No panel, tint or frame behind the image — the work is the card. Website
- * screenshots are cropped to the card's shape from the top (`object-top`), so
- * the header and hero, which are the recognisable part of a page, always
- * survive the crop. The one thing laid over an image is the "View project"
- * chip — opaque and blurred rather than bare text, so it stays legible
- * regardless of what's under it (screenshots are mostly white; a plain label
- * would wash out).
+ * No tint behind the image — the work is the card. A thin browser-chrome bar
+ * sits above each screenshot (three dots, an address pill) rather than
+ * around it: four different projects' screenshots vary a lot in colour and
+ * quality on their own, and this one consistent frame is what makes them
+ * read as a curated set instead of a pile of mismatched clippings. Real
+ * screenshots are cropped to the image area's shape from the top
+ * (`object-top`), so the header and hero, which are the recognisable part of
+ * a page, always survive the crop — the chrome bar sits *above* that area
+ * rather than over it, so it never covers any of the actual page. The one
+ * thing laid over the image itself is the "View project" chip — opaque and
+ * blurred rather than bare text, so it stays legible regardless of what's
+ * under it (screenshots are mostly white; a plain label would wash out).
  *
  * Everything a visitor would otherwise scan a paragraph for (what it is, which
  * tools, what came of it) is one click away on the case study, so it is not
@@ -39,7 +44,20 @@ export function ProjectCard({
   headingLevel: Heading = 'h3',
 }: Props) {
   const frameRef = useRef<HTMLDivElement>(null)
+  const imageRef = useRef<HTMLDivElement>(null)
   const driftRef = useRef<HTMLDivElement>(null)
+
+  // Real host for the address pill on live projects; a plain decorative bar
+  // (no invented URL) for everything else — same rule as the rest of the
+  // site's placeholders: show it, or don't, never fake it.
+  let liveHost: string | null = null
+  if (project.liveUrl) {
+    try {
+      liveHost = new URL(project.liveUrl).hostname.replace(/^www\./, '')
+    } catch {
+      liveHost = null
+    }
+  }
 
   /* Park the frame closed before first paint, then wipe it open on scroll.
      The closed state lives only in JS: a CSS clip-path would fight the tween
@@ -71,8 +89,8 @@ export function ProjectCard({
      because a GSAP-driven transform writes `translate/scale: none` inline and
      would silently cancel any CSS hover rule on the same node. */
   const onPointerMove = (event: React.PointerEvent) => {
-    if (!hasFinePointer() || prefersReducedMotion() || !driftRef.current || !frameRef.current) return
-    const rect = frameRef.current.getBoundingClientRect()
+    if (!hasFinePointer() || prefersReducedMotion() || !driftRef.current || !imageRef.current) return
+    const rect = imageRef.current.getBoundingClientRect()
     const x = (event.clientX - rect.left) / rect.width - 0.5
     const y = (event.clientY - rect.top) / rect.height - 0.5
     gsap.to(driftRef.current, { x: x * 18, y: y * 14, duration: 0.9, ease: 'power3.out' })
@@ -92,56 +110,74 @@ export function ProjectCard({
       >
         <div
           ref={frameRef}
-          onPointerMove={onPointerMove}
-          onPointerLeave={onPointerLeave}
-          className={cn(
-            'relative w-full overflow-hidden rounded-card bg-surface',
-            // Wider than 4:3 on purpose: website screenshots are ~2:1, and a
-            // squarer frame slices the page's own nav off at both corners.
-            featured ? 'aspect-4/3 md:aspect-2/1' : 'aspect-3/2',
-          )}
-          // Drawn artwork keeps its own background, so a frame wider than the
-          // artwork is filled in the same colour rather than showing bars.
-          style={project.heroImage ? undefined : { backgroundColor: project.identity.bg }}
+          className="relative w-full overflow-hidden rounded-card bg-surface ring-1 ring-inset ring-black/[0.07]"
         >
-          {/* Oversized by 12px a side so the pointer drift never exposes an edge. */}
-          <div ref={driftRef} className="absolute -inset-3">
-            <div className="size-full transition-[scale] duration-700 ease-out-expo group-hover/project:scale-[1.04]">
-              {project.heroImage ? (
-                <img
-                  src={project.heroImage}
-                  alt={project.heroAlt}
-                  loading={priority ? 'eager' : 'lazy'}
-                  decoding="async"
-                  fetchPriority={priority ? 'high' : 'auto'}
-                  className="size-full object-cover object-top"
-                />
-              ) : (
-                <ProjectVisual project={project} />
-              )}
-            </div>
-          </div>
-
-          {/* Hairline edge, so a white screenshot doesn't dissolve into the page. */}
+          {/* Chrome bar — decorative window dressing, not real browser UI, so
+              it's aria-hidden and the "address" is a muted label, never
+              underlined or coloured like a link. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 rounded-card ring-1 ring-inset ring-black/[0.07]"
-          />
-
-          {/* Decorative only — the whole card is already one link (aria-label
-              carries "View case study"), so this can't be a second focusable
-              element. Always present, not hover-only: hover has no equivalent
-              on a touch screen, and a chip that only desktop ever sees would
-              make the two feel like different products. */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-4 py-2 text-[0.6875rem] font-medium tracking-[0.08em] text-foreground uppercase shadow-[0_1px_2px_rgba(21,20,18,0.08)] backdrop-blur-sm transition-transform duration-500 ease-out-expo group-hover/project:-translate-y-1"
+            className="relative z-10 flex h-8 shrink-0 items-center gap-3 border-b border-black/6 bg-surface px-3.5 sm:h-9 sm:px-4"
           >
-            View project
-            <svg viewBox="0 0 10 10" aria-hidden="true" className="size-2.5">
-              <path d="M2 8 8 2M3 2h5v5" fill="none" stroke="currentColor" strokeWidth="1.2" />
-            </svg>
-          </span>
+            <span className="flex gap-1.5">
+              <span className="size-1.5 rounded-full bg-black/15" />
+              <span className="size-1.5 rounded-full bg-black/15" />
+              <span className="size-1.5 rounded-full bg-black/15" />
+            </span>
+            <span className="flex h-4 flex-1 items-center rounded-full bg-black/4 px-2.5 sm:h-4.5">
+              {liveHost && (
+                <span className="truncate text-[0.625rem] leading-none text-subtle">{liveHost}</span>
+              )}
+            </span>
+          </div>
+
+          <div
+            ref={imageRef}
+            onPointerMove={onPointerMove}
+            onPointerLeave={onPointerLeave}
+            className={cn(
+              'relative w-full overflow-hidden',
+              // Wider than 4:3 on purpose: website screenshots are ~2:1, and a
+              // squarer frame slices the page's own nav off at both corners.
+              featured ? 'aspect-4/3 md:aspect-2/1' : 'aspect-3/2',
+            )}
+            // Drawn artwork keeps its own background, so a frame wider than the
+            // artwork is filled in the same colour rather than showing bars.
+            style={project.heroImage ? undefined : { backgroundColor: project.identity.bg }}
+          >
+            {/* Oversized by 12px a side so the pointer drift never exposes an edge. */}
+            <div ref={driftRef} className="absolute -inset-3">
+              <div className="size-full transition-[scale] duration-700 ease-out-expo group-hover/project:scale-[1.04]">
+                {project.heroImage ? (
+                  <img
+                    src={project.heroImage}
+                    alt={project.heroAlt}
+                    loading={priority ? 'eager' : 'lazy'}
+                    decoding="async"
+                    fetchPriority={priority ? 'high' : 'auto'}
+                    className="size-full object-cover object-top"
+                  />
+                ) : (
+                  <ProjectVisual project={project} />
+                )}
+              </div>
+            </div>
+
+            {/* Decorative only — the whole card is already one link (aria-label
+                carries "View case study"), so this can't be a second focusable
+                element. Always present, not hover-only: hover has no equivalent
+                on a touch screen, and a chip that only desktop ever sees would
+                make the two feel like different products. */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-4 py-2 text-[0.6875rem] font-medium tracking-[0.08em] text-foreground uppercase shadow-[0_1px_2px_rgba(21,20,18,0.08)] backdrop-blur-sm transition-transform duration-500 ease-out-expo group-hover/project:-translate-y-1"
+            >
+              View project
+              <svg viewBox="0 0 10 10" aria-hidden="true" className="size-2.5">
+                <path d="M2 8 8 2M3 2h5v5" fill="none" stroke="currentColor" strokeWidth="1.2" />
+              </svg>
+            </span>
+          </div>
         </div>
 
         <Reveal className="mt-5" delay={80} y={16}>
