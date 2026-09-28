@@ -29,13 +29,10 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Body type is the system-font stack (-apple-system etc, see index.css)
-         — real San Francisco on Apple devices, each OS's own native UI font
-         elsewhere, no network request either way. Headings (h1–h6 — section
-         titles, project titles, the About headline) use Fraunces, a serif
-         with real character, so "attractive" doesn't rest entirely on the
-         one-off Modak wordmark. Mono eyebrow/label face is JetBrains Mono.
-         All three Google-served weights load in one combined request below. -->
+    <!-- Body/heading type is the system-font stack (-apple-system etc, see
+         index.css) — real San Francisco on Apple devices, each OS's own
+         native UI font elsewhere, and no network request either way. Only
+         the mono eyebrow/label face still comes from Google Fonts. -->
     <!-- The hero name's display face (Modak, self-hosted). Preloaded because
          it is above the fold and `font-display: block` hides the name until
          it arrives; `crossorigin` is required for font preloads even on the
@@ -47,13 +44,13 @@
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
       onload="this.rel='stylesheet'"
     />
     <noscript>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
       />
     </noscript>
 
