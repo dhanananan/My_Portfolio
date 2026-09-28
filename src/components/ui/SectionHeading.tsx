@@ -29,8 +29,12 @@ type Props = {
   /** Sits opposite the title on wide screens — a link or small note. */
   aside?: ReactNode
   className?: string
-  /** Extra classes on the title element itself — e.g. a section that wants
-      a bolder, condensed treatment instead of the default serif/medium one. */
+  /** Replaces (not appends to — see the comment at its call site) the title
+      element's default weight AND colour, e.g. a section that wants a
+      bolder, coloured treatment instead of the default foreground/medium
+      one. Must include its own text colour: the default's `inverse ?
+      text-ink-foreground : text-foreground` is skipped entirely when this
+      is set, not layered under it. */
   titleClassName?: string
   tone?: 'default' | 'inverse'
   as?: 'h2' | 'h3'
@@ -70,12 +74,11 @@ export function SectionHeading({
           <Tag
             className={cn(
               'text-h2',
-              inverse ? 'text-ink-foreground' : 'text-foreground',
-              // Replaces, not appends: font-weight/family/case utilities
+              // Replaces, not appends: colour/weight/family/case utilities
               // conflict with the default, and this joiner doesn't dedupe
               // (see cn.ts) — so a caller opting into its own treatment
-              // must fully replace it, not layer on top of it.
-              titleClassName ?? 'font-medium',
+              // must fully replace it (colour included), not layer on top.
+              titleClassName ?? cn(inverse ? 'text-ink-foreground' : 'text-foreground', 'font-medium'),
             )}
           >
             {title}

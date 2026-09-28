@@ -20,7 +20,7 @@ export default function Work() {
         eyebrow="Selected work"
         title={['Case studies,', 'not screenshots.']}
         lede="Written up the way I actually worked on them — the problem first, the interface last, and the parts that had to change in between."
-        titleClassName="font-sans font-bold uppercase tracking-tight"
+        titleClassName="font-sans font-bold uppercase tracking-tight text-accent"
         meta={[
           { label: 'Projects', value: String(projects.length).padStart(2, '0') },
           { label: 'Disciplines', value: 'Product · UX · UI' },
