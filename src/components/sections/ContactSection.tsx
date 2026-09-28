@@ -27,7 +27,11 @@ export function ContactSection({ index = '04' }: { index?: string }) {
           Have a project in mind?
         </p>
 
-        <h2 className="mt-6 text-h1 font-medium">
+        {/* Explicit colour, not inherited from the section's text-ink-foreground:
+            every heading defaults to accent blue now (see index.css), and
+            blue on this section's near-black background measures under
+            3:1 — a real contrast failure, not a style choice to skip. */}
+        <h2 className="mt-6 text-h1 font-medium text-ink-foreground">
           <TextReveal
             lines={['Let’s create something', 'worth remembering.']}
             immediate={false}

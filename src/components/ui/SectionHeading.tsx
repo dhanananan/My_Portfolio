@@ -78,7 +78,7 @@ export function SectionHeading({
               // conflict with the default, and this joiner doesn't dedupe
               // (see cn.ts) — so a caller opting into its own treatment
               // must fully replace it (colour included), not layer on top.
-              titleClassName ?? cn(inverse ? 'text-ink-foreground' : 'text-foreground', 'font-medium'),
+              titleClassName ?? cn(inverse ? 'text-ink-foreground' : 'text-accent', 'font-medium'),
             )}
           >
             {title}

@@ -205,12 +205,22 @@
     overflow-x: clip;
   }
 
+  /* Every heading site-wide is the accent blue — the same one the hero name
+     and "Let's talk" already use, now extended to every h1–h6 rather than
+     living on two special-cased elements. This is a base-layer default, so
+     any element that legitimately needs a different heading colour (chiefly
+     ContactSection's, on the dark inverse section — accent blue on
+     near-black `--color-ink` measures well under 3:1, a real contrast
+     failure, not just a mismatch) sets its own colour utility directly:
+     Tailwind's utilities layer always wins over this one regardless of
+     source order, so that stays correct without `!important`. */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
+    color: var(--color-accent);
     font-weight: 500;
     text-wrap: balance;
   }
