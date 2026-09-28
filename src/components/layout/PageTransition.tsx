@@ -6,11 +6,11 @@ import { useSmoothScroll } from '@/lib/SmoothScroll'
 /**
  * Route transition.
  * ---------------------------------------------------------------------------
- * Four columns sweep up to cover the viewport, the route swaps while covered,
- * then they clear. The outgoing page stays mounted via `displayLocation` so
- * nothing flashes behind the curtain.
+ * Four columns sweep up to cover the viewport, the bee mark appears for a
+ * beat while covered, the route swaps, then both clear. The outgoing page
+ * stays mounted via `displayLocation` so nothing flashes behind the curtain.
  *
- * Total cost is ~0.8s. Reduced motion swaps instantly instead.
+ * Total cost is ~1.3s. Reduced motion swaps instantly instead.
  */
 
 const COLUMNS = 4
@@ -19,6 +19,7 @@ export function PageTransition({ children }: { children: (location: Location) =>
   const location = useLocation()
   const [displayLocation, setDisplayLocation] = useState(location)
   const columnsRef = useRef<HTMLDivElement>(null)
+  const markRef = useRef<HTMLImageElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const { scrollTo } = useSmoothScroll()
   const isFirstRender = useRef(true)
@@ -69,7 +70,18 @@ export function PageTransition({ children }: { children: (location: Location) =>
         setDisplayLocation(location)
         scrollTo(0, { immediate: true })
       })
-      .to(columns, { yPercent: -100, duration: 0.48, stagger: 0.045 }, '+=0.06')
+      // A held beat while fully covered — the mark arrives, sits, leaves —
+      // instead of swapping the route and immediately reversing the sweep.
+      // The extra ~0.35s is what makes it read as one considered moment
+      // rather than a cut with a flash of colour either side of it.
+      .fromTo(
+        markRef.current,
+        { opacity: 0, scale: 0.75 },
+        { opacity: 1, scale: 1, duration: 0.22, ease: 'back.out(2.2)' },
+        '+=0.05',
+      )
+      .to(markRef.current, { opacity: 0, scale: 0.75, duration: 0.16, ease: 'power2.in' }, '+=0.1')
+      .to(columns, { yPercent: -100, duration: 0.48, stagger: 0.045 }, '-=0.02')
       .set(columnsRef.current, { pointerEvents: 'none' })
       .set(columns, { visibility: 'hidden', yPercent: 100 })
       .fromTo(
@@ -97,6 +109,20 @@ export function PageTransition({ children }: { children: (location: Location) =>
           <div key={i} className="h-full flex-1 bg-ink" />
         ))}
       </div>
+
+      {/* The held-beat mark — spans all four columns, so it's a sibling of
+          the flex row rather than a child of one column. Starts invisible
+          via plain opacity (no transform involved, so — unlike the columns
+          — a Tailwind default and a later GSAP tween don't fight). */}
+      <img
+        ref={markRef}
+        src="/bee.png"
+        alt=""
+        aria-hidden="true"
+        width={160}
+        height={160}
+        className="pointer-events-none fixed inset-0 z-81 m-auto size-10 opacity-0 sm:size-12"
+      />
 
       <div ref={contentRef}>{children(displayLocation)}</div>
     </>

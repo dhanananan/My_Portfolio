@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { nav, site } from '@/data/site'
 import { cn } from '@/lib/cn'
+import { gsap, prefersReducedMotion } from '@/lib/motion'
 import { Button } from '@/components/ui/Button'
 import { MobileMenu } from './MobileMenu'
 
@@ -20,8 +21,56 @@ export function Navbar() {
   const ticking = useRef(false)
   const location = useLocation()
 
+  const desktopNavRef = useRef<HTMLElement>(null)
+  const indicatorRef = useRef<HTMLSpanElement>(null)
+
   useEffect(() => {
     setMenuOpen(false)
+  }, [location.pathname])
+
+  /* A single indicator slides between links — GSAP-tweened `x`/`width` off
+     each link's own measured rect — rather than each NavLink animating its
+     own independent underline. The difference only shows on navigation: one
+     continuous line drawing your eye from "Work" to "About" reads as one
+     interface responding to you; two unrelated fade-outs/fade-ins reads as
+     two accidents. `aria-current="page"` (NavLink sets it automatically) is
+     the source of truth for *where* it belongs, so this never re-implements
+     the active-matching logic (`end`/`matchPrefix`) NavLink already owns. */
+  const slideIndicatorTo = (el: HTMLElement | null | undefined, immediate = false) => {
+    const nav = desktopNavRef.current
+    const indicator = indicatorRef.current
+    if (!el || !nav || !indicator) return
+
+    const navRect = nav.getBoundingClientRect()
+    const linkRect = el.getBoundingClientRect()
+    // Matches the old per-link underline's `inset-x-4` (1rem each side).
+    const INSET = 16
+    const x = linkRect.left - navRect.left + INSET
+    const width = Math.max(0, linkRect.width - INSET * 2)
+
+    if (immediate || prefersReducedMotion()) {
+      gsap.set(indicator, { x, width })
+    } else {
+      gsap.to(indicator, { x, width, duration: 0.45, ease: 'power3.out' })
+    }
+  }
+
+  const slideToActive = (immediate = false) => {
+    const active = desktopNavRef.current?.querySelector<HTMLAnchorElement>('[aria-current="page"]')
+    slideIndicatorTo(active, immediate)
+  }
+
+  // Re-measure on route change (labels/route can differ in width) and once
+  // more after the fonts/layout settle from the initial paint.
+  useLayoutEffect(() => {
+    slideToActive(true)
+  }, [])
+
+  useEffect(() => {
+    slideToActive()
+    const onResize = () => slideToActive(true)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [location.pathname])
 
   useEffect(() => {
@@ -114,38 +163,37 @@ export function Navbar() {
           </Link>
 
           {/* Desktop navigation */}
-          <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+          <nav ref={desktopNavRef} aria-label="Primary" className="relative hidden items-center gap-1 lg:flex">
             {nav.map((item) => (
               <NavLink
                 key={item.href}
                 to={item.href}
                 end={!item.matchPrefix}
+                onMouseEnter={(event) => slideIndicatorTo(event.currentTarget)}
+                onFocus={(event) => slideIndicatorTo(event.currentTarget)}
+                onMouseLeave={() => slideToActive()}
+                onBlur={() => slideToActive()}
                 className={({ isActive }) =>
                   cn(
-                    'group relative px-4 py-2 text-[0.9375rem] transition-colors duration-300',
+                    'relative px-4 py-2 text-[0.9375rem] transition-colors duration-300',
                     isActive ? 'text-foreground' : 'text-muted hover:text-foreground',
                   )
                 }
               >
-                {({ isActive }) => (
-                  <>
-                    {item.label}
-                    <span
-                      aria-hidden="true"
-                      // Only ever one background utility: emitting both
-                      // bg-foreground and bg-accent lets stylesheet order, not
-                      // class order, decide the colour.
-                      className={cn(
-                        'absolute inset-x-4 bottom-1 h-px origin-left transition-transform duration-400 ease-out-expo',
-                        isActive
-                          ? 'scale-x-100 bg-accent'
-                          : 'scale-x-0 bg-foreground group-hover:scale-x-100',
-                      )}
-                    />
-                  </>
-                )}
+                {item.label}
               </NavLink>
             ))}
+
+            {/* The one shared underline — see slideIndicatorTo. Starts at
+                width 0 so it's invisible until the layout effect above
+                positions it; never `bg-foreground` *and* `bg-accent` at
+                once, so stylesheet order can't pick the colour for us. */}
+            <span
+              ref={indicatorRef}
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-1 left-0 h-px w-0 bg-accent"
+            />
+
             <Button to="/contact" size="md" className="ml-4" withArrow>
               Let&rsquo;s talk
             </Button>
