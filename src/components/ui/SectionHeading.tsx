@@ -29,6 +29,9 @@ type Props = {
   /** Sits opposite the title on wide screens — a link or small note. */
   aside?: ReactNode
   className?: string
+  /** Extra classes on the title element itself — e.g. a section that wants
+      a bolder, condensed treatment instead of the default serif/medium one. */
+  titleClassName?: string
   tone?: 'default' | 'inverse'
   as?: 'h2' | 'h3'
 }
@@ -39,6 +42,7 @@ export function SectionHeading({
   lede,
   aside,
   className,
+  titleClassName,
   tone = 'default',
   as: Tag = 'h2',
 }: Props) {
@@ -65,8 +69,13 @@ export function SectionHeading({
         <Reveal className="lg:col-span-7" delay={60}>
           <Tag
             className={cn(
-              'text-h2 font-medium',
+              'text-h2',
               inverse ? 'text-ink-foreground' : 'text-foreground',
+              // Replaces, not appends: font-weight/family/case utilities
+              // conflict with the default, and this joiner doesn't dedupe
+              // (see cn.ts) — so a caller opting into its own treatment
+              // must fully replace it, not layer on top of it.
+              titleClassName ?? 'font-medium',
             )}
           >
             {title}

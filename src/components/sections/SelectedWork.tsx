@@ -14,6 +14,7 @@ export function SelectedWork({ limit }: { limit?: number }) {
           index="01"
           title={<span id="selected-work-heading">Selected work</span>}
           lede="Digital products and experiences I've designed, each written up as a case study."
+          titleClassName="font-sans font-bold uppercase tracking-tight"
         />
 
         <div className="mt-14 sm:mt-20">

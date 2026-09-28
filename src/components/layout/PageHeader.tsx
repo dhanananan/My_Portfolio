@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { cn } from '@/lib/cn'
 import { TextReveal } from '@/components/ui/TextReveal'
 import { Reveal } from '@/components/ui/Reveal'
 
@@ -12,9 +13,12 @@ type Props = {
   title: string[]
   lede?: ReactNode
   meta?: { label: string; value: string }[]
+  /** Replaces (not appends to — see SectionHeading's titleClassName for why)
+      the default `text-h1 font-medium` on the <h1>. */
+  titleClassName?: string
 }
 
-export function PageHeader({ eyebrow, title, lede, meta }: Props) {
+export function PageHeader({ eyebrow, title, lede, meta, titleClassName }: Props) {
   return (
     <header className="pt-32 pb-16 sm:pt-40 sm:pb-20 lg:pt-44">
       <div className="shell">
@@ -25,7 +29,7 @@ export function PageHeader({ eyebrow, title, lede, meta }: Props) {
           </p>
         </Reveal>
 
-        <h1 className="mt-8 text-h1 font-medium sm:mt-10">
+        <h1 className={cn('mt-8 text-h1 sm:mt-10', titleClassName ?? 'font-medium')}>
           <TextReveal lines={title} lineClassName="leading-[0.98]" delay={80} />
         </h1>
 
