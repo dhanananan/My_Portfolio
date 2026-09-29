@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/Footer'
 import { PageTransition } from '@/components/layout/PageTransition'
 import { CustomCursor } from '@/components/ui/CustomCursor'
 import { ScrollProgress } from '@/components/ui/ScrollProgress'
+import { RegistrationMarks } from '@/components/ui/RegistrationMarks'
 import { RouteFallback } from '@/components/ui/RouteFallback'
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary'
 import Home from '@/pages/Home'
@@ -23,6 +24,7 @@ export default function App() {
       <SmoothScrollProvider>
         <CustomCursor />
         <ScrollProgress />
+        <RegistrationMarks />
         <Navbar />
 
         <PageTransition>
