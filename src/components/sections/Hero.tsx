@@ -63,11 +63,24 @@ export function Hero() {
             320px viewport, against the shell's own gutter — any extra
             inset here narrows that budget further and clips it. The frame
             can afford real padding once the viewport has slack to spare. */}
-        <div className="relative border border-border px-0 py-14 sm:px-10 sm:py-20 lg:px-14 lg:py-24">
+        <div className="relative overflow-hidden border border-border px-0 py-14 sm:px-10 sm:py-20 lg:px-14 lg:py-24">
           <span aria-hidden="true" className="absolute left-3 top-3 size-3 border-t border-l border-border-strong" />
           <span aria-hidden="true" className="absolute right-3 top-3 size-3 border-t border-r border-border-strong" />
           <span aria-hidden="true" className="absolute bottom-3 left-3 size-3 border-b border-l border-border-strong" />
           <span aria-hidden="true" className="absolute bottom-3 right-3 size-3 border-r border-b border-border-strong" />
+
+          {/* Giant ghost mark, contained (not bleeding past the frame like
+              the reference's — this frame already has a hard edge, so text
+              crossing it reads as broken rather than deliberate). One word
+              pulled from the existing role copy (site.role), not new copy —
+              texture behind the name, not a second headline competing with
+              it, hence the plain sans rather than the accent-blue Modak. */}
+          <p
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-4 right-3 select-none text-[clamp(4rem,17vw,10rem)] font-bold uppercase leading-none text-foreground/4.5 sm:right-6 lg:right-8"
+          >
+            Designer
+          </p>
 
           <p className="eyebrow flex items-center gap-2">
             <span aria-hidden="true" className="text-accent">

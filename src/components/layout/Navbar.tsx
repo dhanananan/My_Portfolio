@@ -21,17 +21,17 @@ export function Navbar() {
   const ticking = useRef(false)
   const location = useLocation()
 
-  const desktopNavRef = useRef<HTMLElement>(null)
+  const desktopNavRef = useRef<HTMLDivElement>(null)
   const indicatorRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     setMenuOpen(false)
   }, [location.pathname])
 
-  /* A single indicator slides between links — GSAP-tweened `x`/`width` off
-     each link's own measured rect — rather than each NavLink animating its
-     own independent underline. The difference only shows on navigation: one
-     continuous line drawing your eye from "Work" to "About" reads as one
+  /* A single indicator — now a filled pill, not a line — slides between
+     links: GSAP-tweened `x`/`width` off each link's own measured rect,
+     rather than each NavLink animating its own independent state. One
+     continuous chip drawing your eye from "Work" to "About" reads as one
      interface responding to you; two unrelated fade-outs/fade-ins reads as
      two accidents. `aria-current="page"` (NavLink sets it automatically) is
      the source of truth for *where* it belongs, so this never re-implements
@@ -43,10 +43,8 @@ export function Navbar() {
 
     const navRect = nav.getBoundingClientRect()
     const linkRect = el.getBoundingClientRect()
-    // Matches the old per-link underline's `inset-x-4` (1rem each side).
-    const INSET = 16
-    const x = linkRect.left - navRect.left + INSET
-    const width = Math.max(0, linkRect.width - INSET * 2)
+    const x = linkRect.left - navRect.left
+    const width = linkRect.width
 
     if (immediate || prefersReducedMotion()) {
       gsap.set(indicator, { x, width })
@@ -162,39 +160,49 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop navigation */}
-          <nav ref={desktopNavRef} aria-label="Primary" className="relative hidden items-center gap-1 lg:flex">
-            {nav.map((item) => (
-              <NavLink
-                key={item.href}
-                to={item.href}
-                end={!item.matchPrefix}
-                onMouseEnter={(event) => slideIndicatorTo(event.currentTarget)}
-                onFocus={(event) => slideIndicatorTo(event.currentTarget)}
-                onMouseLeave={() => slideToActive()}
-                onBlur={() => slideToActive()}
-                className={({ isActive }) =>
-                  cn(
-                    'relative px-4 py-2 text-[0.9375rem] transition-colors duration-300',
-                    isActive ? 'text-foreground' : 'text-muted hover:text-foreground',
-                  )
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
+          {/* Desktop navigation — a floating glass "dock" capsule for the
+              links (one continuous filled pill sliding inside it, see
+              slideIndicatorTo), with the primary CTA kept as its own
+              Button outside it rather than folded in as another dock item:
+              doubling up two different pill treatments in one spot reads as
+              noise, not polish. Glassy regardless of scroll position — the
+              header's own bg/blur is scroll-gated (`compact`), this isn't. */}
+          <nav aria-label="Primary" className="hidden items-center gap-4 lg:flex">
+            <div
+              ref={desktopNavRef}
+              className="relative flex items-center gap-1 rounded-full border border-border bg-surface/70 p-1.5 backdrop-blur-sm"
+            >
+              {nav.map((item) => (
+                <NavLink
+                  key={item.href}
+                  to={item.href}
+                  end={!item.matchPrefix}
+                  onMouseEnter={(event) => slideIndicatorTo(event.currentTarget)}
+                  onFocus={(event) => slideIndicatorTo(event.currentTarget)}
+                  onMouseLeave={() => slideToActive()}
+                  onBlur={() => slideToActive()}
+                  className={({ isActive }) =>
+                    cn(
+                      'relative z-1 rounded-full px-4 py-2 text-[0.9375rem] transition-colors duration-300',
+                      isActive ? 'text-accent' : 'text-muted hover:text-foreground',
+                    )
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
 
-            {/* The one shared underline — see slideIndicatorTo. Starts at
-                width 0 so it's invisible until the layout effect above
-                positions it; never `bg-foreground` *and* `bg-accent` at
-                once, so stylesheet order can't pick the colour for us. */}
-            <span
-              ref={indicatorRef}
-              aria-hidden="true"
-              className="pointer-events-none absolute bottom-1 left-0 h-px w-0 bg-accent"
-            />
+              {/* The one shared pill — see slideIndicatorTo. Starts at width
+                  0 so it's invisible until the layout effect above
+                  positions it. */}
+              <span
+                ref={indicatorRef}
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-1 left-0 z-0 w-0 rounded-full bg-accent/10"
+              />
+            </div>
 
-            <Button to="/contact" size="md" className="ml-4" withArrow>
+            <Button to="/contact" size="md" withArrow>
               Let&rsquo;s talk
             </Button>
           </nav>
