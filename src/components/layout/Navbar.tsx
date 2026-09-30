@@ -170,7 +170,7 @@ export function Navbar() {
           <nav aria-label="Primary" className="hidden items-center gap-4 lg:flex">
             <div
               ref={desktopNavRef}
-              className="relative flex items-center gap-1 rounded-full border border-border bg-surface/70 p-1.5 backdrop-blur-sm"
+              className="relative flex items-center gap-1 rounded-full border border-white/50 bg-surface/50 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_1px_2px_rgba(21,20,18,0.04),0_10px_28px_-8px_rgba(21,20,18,0.14)] backdrop-blur-lg"
             >
               {nav.map((item) => (
                 <NavLink
@@ -198,7 +198,7 @@ export function Navbar() {
               <span
                 ref={indicatorRef}
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-y-1 left-0 z-0 w-0 rounded-full bg-accent/10"
+                className="pointer-events-none absolute inset-y-1 left-0 z-0 w-0 rounded-full bg-accent/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_0_0_1px_rgba(31,53,230,0.12)]"
               />
             </div>
 
