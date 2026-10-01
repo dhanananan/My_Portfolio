@@ -98,8 +98,12 @@ export function Hero() {
             <span aria-hidden="true">
               <TextReveal
                 lines={['Dhananjaya', 'Raut.']}
-                className="block font-display text-hero font-bold uppercase tracking-tight text-accent"
-                lineClassName="[&:not(:first-child)]:-mt-[0.02em]"
+                className="block font-display text-hero uppercase text-accent"
+                // Modak sits high in its line box, leaving a loose gap between the
+                // two lines; pulling the second up locks them together the way
+                // the stacked-wordmark reference does. Safe against clipping:
+                // each line's glyphs sit well inside their own overflow box.
+                lineClassName="[&:not(:first-child)]:-mt-[0.11em]"
                 interactive
                 delay={120}
               />

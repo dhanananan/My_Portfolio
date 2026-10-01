@@ -140,7 +140,7 @@ ${email}`
             <span aria-hidden="true">
               <TextReveal
                 lines={['Let’s', 'talk.']}
-                className="block font-display text-hero font-bold uppercase tracking-tight text-accent"
+                className="block font-display text-hero uppercase text-accent"
                 lineClassName="[&:not(:first-child)]:-mt-[0.11em]"
                 interactive
                 delay={80}
