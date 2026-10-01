@@ -2,12 +2,6 @@ import { Reveal } from '@/components/ui/Reveal'
 
 /** A short, quiet note between the credentials and the call to action. */
 export function BeyondDesign() {
-  return () => {
-      tween.scrollTrigger?.kill()
-      tween.kill()
-    }
-  }, [])
-
   return (
     <section className="border-t border-border py-section" aria-labelledby="beyond-heading">
       <div className="shell">
