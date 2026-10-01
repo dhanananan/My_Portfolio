@@ -2,7 +2,7 @@ import { useSeo } from '@/lib/seo'
 import { site } from '@/data/site'
 import { projects } from '@/data/projects'
 import { PageHeader } from '@/components/layout/PageHeader'
-import { ProjectTimeline } from '@/components/project/ProjectTimeline'
+import { ProjectGrid } from '@/components/project/ProjectGrid'
 import { ContactSection } from '@/components/sections/ContactSection'
 import { Reveal } from '@/components/ui/Reveal'
 
@@ -29,7 +29,9 @@ export default function Work() {
       />
 
       <section className="pb-section" aria-label="Project case studies">
-        <ProjectTimeline projects={projects} headingLevel="h2" />
+        <div className="shell">
+          <ProjectGrid projects={projects} headingLevel="h2" />
+        </div>
 
         <div className="shell mt-20 sm:mt-28">
           <Reveal className="border-t border-border pt-8">

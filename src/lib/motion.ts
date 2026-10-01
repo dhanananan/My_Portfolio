@@ -1,12 +1,8 @@
 import { useRef, type PointerEvent } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { SplitText } from 'gsap/SplitText'
 
-// SplitText was a paid Club GreenSock plugin until GSAP went fully free (the
-// 2025 Webflow acquisition) — it ships in the same installed `gsap` package
-// now, so this is a registration, not a new dependency.
-gsap.registerPlugin(ScrollTrigger, SplitText)
+gsap.registerPlugin(ScrollTrigger)
 
 /** Read once per call — users can change this preference mid-session. */
 export const prefersReducedMotion = () =>
@@ -50,4 +46,4 @@ export function useMagnetic<T extends HTMLElement>(strength = 0.3) {
   return { ref, onPointerMove, onPointerLeave }
 }
 
-export { gsap, ScrollTrigger, SplitText }
+export { gsap, ScrollTrigger }
