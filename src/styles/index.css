@@ -69,12 +69,13 @@
      --font-serif intentionally equals --font-sans — Apple's site has no
      serif accents, so the rare `font-serif italic` flourish now renders as
      italic system font instead of pulling in a separate serif family. */
-  --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-sans: 'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   --font-serif: var(--font-sans);
   --font-mono: var(--font-sans);
-  /* Inflated "bubble" display face for the hero name — see @font-face above.
+  /* Righteous for headings, Nunito for text. --font-hero is the inflated "bubble" face for the hero name — see @font-face above.
      Falls back to a heavy system sans so it degrades to bold, not to thin. */
-  --font-display: 'Modak', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial Black, sans-serif;
+  --font-display: 'Righteous', 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  --font-hero: 'Modak', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial Black, sans-serif;
 
   /* --- Fluid type scale ---------------------------------------------------
      Every step is clamp()ed between the 375px floor and the 1440px ceiling.
@@ -219,7 +220,8 @@
   h5,
   h6 {
     color: var(--color-accent);
-    font-weight: 500;
+    font-family: var(--font-display);
+    font-weight: 400;
     text-wrap: balance;
   }
 

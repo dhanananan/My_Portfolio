@@ -98,7 +98,7 @@ export function Hero() {
             <span aria-hidden="true">
               <TextReveal
                 lines={['Dhananjaya', 'Raut.']}
-                className="block font-display text-hero uppercase text-accent"
+                className="block font-hero text-hero uppercase text-accent"
                 // Modak sits high in its line box, leaving a loose gap between the
                 // two lines; pulling the second up locks them together the way
                 // the stacked-wordmark reference does. Safe against clipping:
